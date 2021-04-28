@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: labfarward-programming-test
+    version: '@project.version@'
+
+  datasource:
+    url: "jdbc:mysql://localhost:3306/labfarward?useLocalSessionState=true&useLocalTransactionState=true&autoReconnect=true&verifyServerCertificate=false&useSSL=false&requireSSL=false&characterEncoding=UTF-8&useUnicode=true&createDatabaseIfNotExist=true"
+    username: root
+    password: Zoro@123
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+
+  flyway:
+    locations: classpath:db/migration
+
+  jpa:
+    hibernate.ddl-auto: update
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,info
