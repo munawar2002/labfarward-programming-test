@@ -4,9 +4,11 @@ import com.labfarward.programmingtest.controller.spec.CategoriesApi;
 import com.labfarward.programmingtest.dto.spec.CategoryRequestDto;
 import com.labfarward.programmingtest.dto.spec.CategoryResponseDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@RestController
 public class CategoryItemController implements CategoriesApi {
 
     @Override

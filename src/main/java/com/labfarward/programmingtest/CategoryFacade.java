@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CategoryFacade {
 
-    private final CategoryRepository categoryRepository;
+    //private final CategoryRepository categoryRepository;
 
     public CategoryResponseDto saveCategory(CategoryRequestDto categoryRequestDto){
 

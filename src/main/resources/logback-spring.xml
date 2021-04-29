@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+  <springProperty name="springAppName" scope="context" source="spring.application.name"/>
+  <springProperty name="springAppVersion" scope="context" source="spring.application.version"/>
+
+  <!-- Example for logging into the build folder of your project -->
+  <property name="LOG_HOME" value="${catalina.home}/logs"/>​
+  <property name="LOG_FILE" value="${LOG_HOME}/app/current"/>​
+  <property name="ROTATED_LOG_FILE" value="${LOG_HOME}/app/rotated/logstash"/>​
+  <property name="JSON_LOG_FILE" value="${LOG_HOME}/app/application-logs"/>​
+  <property name="EXCEPTION_LOG_FILE" value="${LOG_HOME}/app/exceptions"/>​
+  <property name="ROTATED_EXCEPTION_LOG_FILE" value="${LOG_HOME}/app/exceptions"/>​
+  <property name="ROUTING_LOG_FILE" value="${LOG_HOME}/app/routing"/>​
+  <property name="ROTATED_ROUTING_LOG_FILE" value="${LOG_HOME}/app/rotated/routing"/>​
+
+  <property name="CONSOLE_LOG_PATTERN"
+            value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%rEx{full}%n"/>
+
+  <!-- local profile based configuration -->
+  <springProfile name="local">
+    <logger additivity="false" level="DEBUG" name="com.labfarward">
+      <appender-ref ref="CONSOLE"/>
+    </logger>
+  </springProfile>
+
+  <!-- Appender to log to console -->
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="console">
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <!-- Minimum logging level to be presented in the console logs-->
+      <level>INFO</level>
+    </filter>
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <!-- Appender to log to file -->​
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="flatfile">
+    <file>${LOG_FILE}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>${ROTATED_LOG_FILE}.%d{yyyy-MM-dd-HH}.%i.log</fileNamePattern>
+      <!-- each file should be at most 50MB, keep 10 days worth of history, but at most 500MB -->
+      <maxFileSize>50MB</maxFileSize>
+      <maxHistory>10</maxHistory>
+      <totalSizeCap>500MB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <!-- Appender to log to file -->​
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="logstashErrorFile">
+    <file>${EXCEPTION_LOG_FILE}.json</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>${ROTATED_EXCEPTION_LOG_FILE}.%d{yyyy-MM-dd-HH}.%i.json.gz</fileNamePattern>
+      <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+      <maxFileSize>50MB</maxFileSize>
+      <maxHistory>10</maxHistory>
+      <totalSizeCap>500MB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%message%n</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  ​
+  <!--&lt;!&ndash; Appender to log to file in a JSON format &ndash;&gt;-->
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="logstash">
+    <file>${JSON_LOG_FILE}.json</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>${JSON_LOG_FILE}.%d{yyyy-MM-dd-HH}.%i.json.gz</fileNamePattern>
+      <!-- each file should be at most 50MB, keep 12 hours worth of history, but at most 2GB -->
+      <maxFileSize>50MB</maxFileSize>
+      <maxHistory>12</maxHistory>
+      <totalSizeCap>2GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <timestamp>
+          <timeZone>UTC</timeZone>
+        </timestamp>
+        <pattern>
+          <pattern>
+            {
+            "severity": "%level",
+            "service": "${springAppName:-}",
+            "version": "${springAppVersion:-}",
+            "trace": "%X{X-B3-TraceId:-}",
+            "span": "%X{X-B3-SpanId:-}",
+            "exportable": "%X{X-Span-Export:-}",
+            "pid": "${PID:-}",
+            "thread": "%thread",
+            "class": "%logger{40}",
+            "hostname": "${HOSTNAME:-}",
+            "rest": "%message",
+            "stackTrace": "%ex{full}"
+            }
+          </pattern>
+        </pattern>
+      </providers>
+    </encoder>
+  </appender>
+
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="routingLog">
+    <file>${ROUTING_LOG_FILE}-logtash.json</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- rollover daily -->
+      <fileNamePattern>${ROTATED_ROUTING_LOG_FILE}-logtash.%d{yyyy-MM-dd-HH}.%i.json.gz
+      </fileNamePattern>
+      <!-- each file should be at most 50MB, will keep at most 10 hours of history or 500MB max -->
+      <maxFileSize>50MB</maxFileSize>
+      <maxHistory>10</maxHistory>
+      <totalSizeCap>500MB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%message%n</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <logger additivity="false" level="info" name="com.labfarward">
+    <appender-ref ref="flatfile"/>
+    <appender-ref ref="logstash"/>
+  </logger>
+
+  <logger additivity="false" level="info" name="errorCodeLogger">
+    <appender-ref ref="logstashErrorFile"/>
+  </logger>
+
+  <logger additivity="false" level="info" name="routingLogger">
+    <appender-ref ref="routingLog"/>
+  </logger>
+
+  <logger name="com.intuit.karate" level="DEBUG"/>
+</configuration>
