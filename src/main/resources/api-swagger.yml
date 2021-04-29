@@ -1,0 +1,174 @@
+openapi: "3.0.2"
+info:
+  description: "LabFarward Programming Test API"
+  version: "1.0"
+  title: "LabFarward API"
+  contact:
+    email: "info@labfarward.com"
+servers:
+  - url: "http://localhost:8080"
+
+paths:
+  "/categories":
+    post:
+      summary: "Add new category"
+      description: "Add new category of an item"
+      operationId: "saveCategory"
+      tags:
+        - "labfarward"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryRequestDto"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponseDto"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+        500:
+          description: "Unknown error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+
+    get:
+      summary: "Get list of categories"
+      description: "Get the list of categories"
+      operationId: "getAllCategories"
+      tags:
+        - "labfarward"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponseDto"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+        500:
+          description: "Unknown error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+
+  "/categories/{id}":
+    post:
+      summary: "Get a single category"
+      description: "Get a single category"
+      operationId: "getCategory"
+      tags:
+        - "labfarward"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponseDto"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+        500:
+          description: "Unknown error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+
+
+
+components:
+  schemas:
+    ErrorResponseDto:
+      type: "object"
+      properties:
+        errorCode:
+          type: "string"
+        errorMessage:
+          type: "string"
+
+    CategoryRequestDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+        attributeDefinitions:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AttributeDefinitionRequestDto"
+
+
+    CategoryResponseDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+        active:
+          type: "boolean"
+        deleted:
+          type: "boolean"
+        attributeDefinitions:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AttributeDefinitionResponseDto"
+        createdAt:
+          type: string
+          format: date
+        createdBy:
+          type: "string"
+
+    AttributeDefinitionRequestDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+
+    AttributeDefinitionResponseDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+        active:
+          type: "boolean"
+        deleted:
+          type: "boolean"
+        createdAt:
+          type: string
+          format: date
+        createdBy:
+          type: "string"
+
