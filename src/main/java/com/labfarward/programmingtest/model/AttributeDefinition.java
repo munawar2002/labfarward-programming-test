@@ -6,7 +6,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,18 +14,24 @@ import java.util.List;
 @ToString
 @Builder
 @Entity
-@Table(name = "category")
-public class Category {
+public class AttributeDefinition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name")
-    private String name; // 1. device
+    private String name;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "type")
+    private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -47,6 +52,7 @@ public class Category {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
 
 
 }
