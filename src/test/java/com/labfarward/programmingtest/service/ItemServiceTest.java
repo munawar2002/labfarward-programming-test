@@ -1,10 +1,8 @@
 package com.labfarward.programmingtest.service;
 
 import com.labfarward.programmingtest.dto.spec.AttributeValueDto;
-import com.labfarward.programmingtest.dto.spec.CategoryRequestDto;
 import com.labfarward.programmingtest.dto.spec.ItemRequestDto;
 import com.labfarward.programmingtest.helper.SampleObjects;
-import com.labfarward.programmingtest.model.Category;
 import com.labfarward.programmingtest.model.Item;
 import com.labfarward.programmingtest.repository.AttributeDefinitionRepository;
 import com.labfarward.programmingtest.repository.ItemAttributeValueRepository;
@@ -46,7 +44,7 @@ public class ItemServiceTest {
         when(itemRepository.save(SampleObjects.getItem()))
                 .thenReturn(SampleObjects.getItem());
 
-        Item actual = itemService.saveItem(SampleObjects.getCategory(),itemRequestDto);
+        Item actual = itemService.saveItem(null,SampleObjects.getCategory(),itemRequestDto);
 
         assertEquals(SampleObjects.getItem(), actual);
     }
@@ -64,7 +62,7 @@ public class ItemServiceTest {
                 .thenReturn(Optional.of(SampleObjects.getAttributeDefinitionResponse()));
 
 
-        itemService.saveItemAttributeValue(SampleObjects.getItem(), itemAttributeValue);
+        itemService.saveOrUpdateItemAttributeValue(SampleObjects.getItem(), itemAttributeValue);
 
         assertTrue(true);
     }

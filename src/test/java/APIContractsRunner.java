@@ -10,12 +10,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.MySQLContainer;
 
 @Slf4j
 @CucumberOptions (
         tags = {"~@ignore", "@CDC"}
 )
+@ActiveProfiles(profiles = "test")
 public class APIContractsRunner {
 
     @Rule

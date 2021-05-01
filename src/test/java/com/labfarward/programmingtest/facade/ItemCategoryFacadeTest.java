@@ -15,9 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -66,11 +69,40 @@ public class ItemCategoryFacadeTest {
         when(categoryRepository.findById(CATEGORY_ID))
                 .thenReturn(Optional.of(SampleObjects.getCategory())) ;
 
-        when(itemService.saveItem(SampleObjects.getCategory(), itemRequestDto))
+        when(itemService.saveItem(null,SampleObjects.getCategory(), itemRequestDto))
                 .thenReturn(SampleObjects.getItem());
 
-        ItemResponseDto actual = itemCategoryFacade.saveItem(CATEGORY_ID,itemRequestDto);
+        ItemResponseDto actual = itemCategoryFacade.saveOrUpdateItem(null,CATEGORY_ID,itemRequestDto);
 
         assertEquals(SampleObjects.getItemResponseDto(), actual);
+    }
+
+    @DisplayName("Test update item")
+    @Test
+    void testUpdateItem() {
+
+        ItemRequestDto itemRequestDto = SampleObjects.getItemRequestDto();
+
+        when(categoryRepository.findById(CATEGORY_ID))
+                .thenReturn(Optional.of(SampleObjects.getCategory())) ;
+
+        int itemId = 1;
+
+        when(itemService.saveItem(itemId,SampleObjects.getCategory(), itemRequestDto))
+                .thenReturn(SampleObjects.getItem());
+
+        ItemResponseDto actual = itemCategoryFacade.saveOrUpdateItem(itemId,CATEGORY_ID,itemRequestDto);
+
+        assertEquals(SampleObjects.getItemResponseDto(), actual);
+    }
+
+    @DisplayName("Test to get all items of category")
+    @Test
+    void testGetItemsByCategory() {
+
+        when(categoryRepository.findById(CATEGORY_ID))
+                .thenReturn(Optional.of(SampleObjects.getCategory())) ;
+
+        assertThrows(NullPointerException.class,() -> itemCategoryFacade.getItems(CATEGORY_ID));
     }
 }

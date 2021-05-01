@@ -7,7 +7,10 @@ import com.labfarward.programmingtest.mapper.CategoryMapper;
 import com.labfarward.programmingtest.mapper.ItemMapper;
 import com.labfarward.programmingtest.model.Category;
 import com.labfarward.programmingtest.model.Item;
+import com.labfarward.programmingtest.model.ItemAttributeValue;
 import com.labfarward.programmingtest.repository.CategoryRepository;
+import com.labfarward.programmingtest.repository.ItemAttributeValueRepository;
+import com.labfarward.programmingtest.repository.ItemRepository;
 import com.labfarward.programmingtest.service.AttributeDefinitionService;
 import com.labfarward.programmingtest.service.CategoryService;
 import com.labfarward.programmingtest.service.ItemService;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -29,6 +33,8 @@ public class ItemCategoryFacade {
     private final CategoryRepository categoryRepository;
     private final AttributeDefinitionService attributeDefinitionService;
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
+    private final ItemAttributeValueRepository itemAttributeValueRepository;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CategoryResponseDto saveCategory(CategoryRequestDto categoryRequestDto){
@@ -44,7 +50,7 @@ public class ItemCategoryFacade {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public ItemResponseDto saveItem(Integer categoryId, ItemRequestDto itemRequestDto){
+    public ItemResponseDto saveOrUpdateItem(Integer itemId, Integer categoryId, ItemRequestDto itemRequestDto){
 
         ItemCategoryValidator.validateItemRequestDto(categoryId,itemRequestDto);
 
@@ -52,15 +58,42 @@ public class ItemCategoryFacade {
                 categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new UserException(ErrorType.CATEGORY_NOT_FOUND));
 
-        Item item = itemService.saveItem(category,itemRequestDto);
+        Item item = itemService.saveItem(itemId,category,itemRequestDto);
 
-        itemRequestDto.getAttributeValues().forEach(av -> {
-            itemService.saveItemAttributeValue(item,av);
-        });
+        itemRequestDto.getAttributeValues().forEach(av -> itemService.saveOrUpdateItemAttributeValue(item,av));
 
         return ItemMapper.mapToItemResponseDto(item, itemRequestDto.getAttributeValues());
     }
 
+    public List<ItemResponseDto> getItems(int categoryId){
 
+        Category category =
+                categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new UserException(ErrorType.CATEGORY_NOT_FOUND));
+
+        List<Item> items = itemRepository.findByCategoryAndActiveIsTrueAndDeletedIsFalse(category);
+
+        List<ItemResponseDto> itemResponseDtos = new ArrayList<>();
+        items.forEach(item -> itemResponseDtos.add(mapToItemResponseDto(item)));
+
+        return itemResponseDtos;
+    }
+
+    private ItemResponseDto mapToItemResponseDto(Item item) {
+        ItemResponseDto itemResponseDto = new ItemResponseDto();
+        List<AttributeValueDto> attributeValueDtos = new ArrayList<>();
+
+        itemAttributeValueRepository.findByItem(item).forEach(iav -> attributeValueDtos.add(new AttributeValueDto()
+                            .attributeName(iav.getAttributeDefinition().getName())
+                            .value(iav.getValue())));
+
+        itemResponseDto.setName(item.getName());
+        itemResponseDto.setDescription(item.getDescription());
+        itemResponseDto.setActive(item.isActive());
+        itemResponseDto.setDeleted(item.isDeleted());
+        itemResponseDto.setCategoryName(item.getCategory().getName());
+        itemResponseDto.setAttributeValues(attributeValueDtos);
+        return itemResponseDto;
+    }
 
 }

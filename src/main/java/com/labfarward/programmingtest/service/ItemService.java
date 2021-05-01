@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +28,12 @@ public class ItemService {
     private final ItemAttributeValueRepository itemAttributeValueRepository;
     private final AttributeDefinitionRepository attributeDefinitionRepository;
 
-    public Item saveItem(Category category, ItemRequestDto itemRequestDto){
+    public Item saveItem(Integer itemId, Category category, ItemRequestDto itemRequestDto) {
+        return itemRepository.findById(itemId == null ? 0 : itemId)
+                .orElseGet(() -> saveNewItem(category, itemRequestDto));
+    }
+
+    private Item saveNewItem(Category category, ItemRequestDto itemRequestDto) {
         Item item = Item.builder()
                 .name(itemRequestDto.getName())
                 .description(itemRequestDto.getDescription())
@@ -39,20 +46,29 @@ public class ItemService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void saveItemAttributeValue(Item item, AttributeValueDto attributeValueDto){
+    public void saveOrUpdateItemAttributeValue(Item item, AttributeValueDto attributeValueDto) {
 
         AttributeDefinition attributeDefinition =
                 attributeDefinitionRepository
                         .findByNameAndCategoryAndActiveIsTrueAndDeletedIsFalse(
                                 attributeValueDto.getAttributeName()
-                                ,item.getCategory())
-                .orElseThrow(()-> new UserException(ErrorType.ATTRIBUTE_DEFINITION_NOT_FOUND));
+                                , item.getCategory())
+                        .orElseThrow(() -> new UserException(ErrorType.ATTRIBUTE_DEFINITION_NOT_FOUND));
 
-        ItemAttributeValue itemAttributeValue = ItemAttributeValue.builder()
-                .item(item)
-                .attributeDefinition(attributeDefinition)
-                .value(attributeValueDto.getValue())
-                .build();
+        Optional<ItemAttributeValue> optionalItemAttributeValue =
+                itemAttributeValueRepository.findByItemAndAttributeDefinition(item,attributeDefinition);
+
+        ItemAttributeValue itemAttributeValue;
+        if(optionalItemAttributeValue.isPresent()){
+            itemAttributeValue = optionalItemAttributeValue.get();
+            itemAttributeValue.setValue(attributeValueDto.getValue());
+        } else {
+            itemAttributeValue = ItemAttributeValue.builder()
+                    .item(item)
+                    .attributeDefinition(attributeDefinition)
+                    .value(attributeValueDto.getValue())
+                    .build();
+        }
 
         itemAttributeValueRepository.save(itemAttributeValue);
     }

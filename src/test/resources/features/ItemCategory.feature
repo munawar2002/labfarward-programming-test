@@ -155,7 +155,7 @@ Feature: Balance
     """
 
   @CDC
-  Scenario: Save new item
+  Scenario: Save and update new item
     Given url HOST
     Given path '/categories'
     Given request
@@ -249,8 +249,57 @@ Feature: Balance
     }
     """
 
+    Given url HOST
+    Given path '/categories/1/items/1'
+    Given request
+    """
+    {
+       "attributeValues": [
+        {
+          "attributeName": "name",
+          "value": "Name2"
+        },
+        {
+          "attributeName": "expiry",
+          "value": "Tomorrow"
+        }
+      ],
+    "description": "Item Description",
+    "name": "Item Name"
+    }
+    """
+    And header Accept = 'application/json'
+    When method PUT
+    Then status 200
+    And match response ==
+    """
+    {
+      "name": "Item Name",
+      "description": "Item Description",
+      "active": true,
+      "deleted": false,
+      "categoryName": "device7",
+      "attributeValues": [
+        {
+          "attributeName": "name",
+          "value": "Name2"
+        },
+        {
+          "attributeName": "expiry",
+          "value": "Tomorrow"
+        }
+      ]
+    }
+    """
+
+    Given url HOST
+    Given path '/categories/1/items'
+    And header Accept = 'application/json'
+    When method GET
+    Then status 200
+
   @CDC
-  Scenario: Save new item
+  Scenario: Category not found while saving item
     Given url HOST
     Given path '/categories/100/items'
     Given request
