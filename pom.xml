@@ -23,6 +23,7 @@
 		<swagger-core.version>2.1.9</swagger-core.version>
 		<logstash-logback-encoder.version>5.3</logstash-logback-encoder.version>
 		<springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
+		<karate.version>0.8.0.1</karate.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -128,6 +129,28 @@
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>${logstash-logback-encoder.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-apache</artifactId>
+			<version>${karate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-netty</artifactId>
+			<version>${karate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

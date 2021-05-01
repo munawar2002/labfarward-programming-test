@@ -86,10 +86,12 @@ components:
       properties:
         name:
           type: "string"
+          nullable: false
         description:
           type: "string"
         type:
           type: "string"
+          minLength: 1
 
     AttributeDefinitionResponseDto:
       type: "object"

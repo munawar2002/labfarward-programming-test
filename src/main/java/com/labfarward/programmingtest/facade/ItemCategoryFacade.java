@@ -7,8 +7,10 @@ import com.labfarward.programmingtest.mapper.CategoryMapper;
 import com.labfarward.programmingtest.model.Category;
 import com.labfarward.programmingtest.service.AttributeDefinitionService;
 import com.labfarward.programmingtest.service.CategoryService;
+import com.labfarward.programmingtest.validator.ItemCategoryValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,6 +25,8 @@ public class ItemCategoryFacade {
 
     public CategoryResponseDto saveCategory(CategoryRequestDto categoryRequestDto){
 
+        ItemCategoryValidator.validateCategoryRequestDto(categoryRequestDto);
+
         Category category = categoryService.saveCategory(categoryRequestDto);
 
         List<AttributeDefinitionResponseDto> attributeDefinitions =
@@ -30,5 +34,7 @@ public class ItemCategoryFacade {
 
         return CategoryMapper.mapToCategoryResponseDto(category,attributeDefinitions);
     }
+
+
 
 }
