@@ -6,7 +6,6 @@ import com.labfarward.programmingtest.mapper.AttributeDefinitionMapper;
 import com.labfarward.programmingtest.model.AttributeDefinition;
 import com.labfarward.programmingtest.model.Category;
 import com.labfarward.programmingtest.repository.AttributeDefinitionRepository;
-import com.labfarward.programmingtest.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

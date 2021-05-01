@@ -10,7 +10,6 @@ import com.labfarward.programmingtest.service.CategoryService;
 import com.labfarward.programmingtest.validator.ItemCategoryValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
