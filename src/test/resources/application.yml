@@ -1,0 +1,25 @@
+spring:
+  profiles: test
+  application:
+    name: labfarward-programming-test
+    version: '@project.version@'
+
+  datasource:
+    url: ${DB_URL}
+    #jdbc:mysql://127.0.0.1:3306/underpayments
+    username: ${DB_USERNAME}
+    #appuser
+    password: ${DB_PASSWORD}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+
+  flyway:
+    locations: classpath:db/migration
+
+  jpa:
+    hibernate.ddl-auto: update
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+
+management:
+  endpoints.web:
+    base-path: /
+    path-mapping.health: health

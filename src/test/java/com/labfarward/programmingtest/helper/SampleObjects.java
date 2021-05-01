@@ -1,16 +1,15 @@
 package com.labfarward.programmingtest.helper;
 
-import com.labfarward.programmingtest.dto.spec.AttributeDefinitionRequestDto;
-import com.labfarward.programmingtest.dto.spec.AttributeDefinitionResponseDto;
-import com.labfarward.programmingtest.dto.spec.CategoryRequestDto;
-import com.labfarward.programmingtest.dto.spec.CategoryResponseDto;
+import com.labfarward.programmingtest.dto.spec.*;
 import com.labfarward.programmingtest.model.AttributeDefinition;
 import com.labfarward.programmingtest.model.Category;
+import com.labfarward.programmingtest.model.Item;
 import lombok.experimental.UtilityClass;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -107,4 +106,42 @@ public class SampleObjects {
         return attributeDefinitionResponseDtos;
     }
 
+    public Item getItem(){
+        return Item.builder()
+                .category(getCategory())
+                .active(true)
+                .deleted(false)
+                .name("Item1")
+                .description("Item1")
+                .build();
+    }
+
+    public ItemRequestDto getItemRequestDto(){
+        List<AttributeValueDto> attributeValueDtos = getAttributeValueDtos();
+
+        return new ItemRequestDto()
+                .name("Item1")
+                .description("Item1")
+                .attributeValues(attributeValueDtos);
+    }
+
+    public List<AttributeValueDto> getAttributeValueDtos() {
+        return Collections.singletonList(getItemAttributeValue());
+    }
+
+    public AttributeValueDto getItemAttributeValue() {
+        return new AttributeValueDto()
+                .attributeName("attr1")
+                .value("value1");
+    }
+
+    public ItemResponseDto getItemResponseDto(){
+        return new ItemResponseDto()
+                .active(true)
+                .deleted(false)
+                .categoryName(getCategory().getName())
+                .attributeValues(getAttributeValueDtos())
+                .name(getItem().getName())
+                .description(getItem().getDescription());
+    }
 }

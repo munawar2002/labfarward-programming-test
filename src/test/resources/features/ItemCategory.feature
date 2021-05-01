@@ -153,3 +153,130 @@ Feature: Balance
       "errorMessage": "Attribute Definition type can't be null"
     }
     """
+
+  @CDC
+  Scenario: Save new item
+    Given url HOST
+    Given path '/categories'
+    Given request
+    """
+    {
+      "attributeDefinitions" : [
+      {
+        "description": "name",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "description": "expiry",
+        "name": "expiry",
+        "type": "date"
+      }
+    ],
+    "description": "Category2",
+    "name": "Category2"
+    }
+    """
+    And header Accept = 'application/json'
+    When method POST
+    Then status 201
+    And match response ==
+    """
+    {
+      "name": "Category2",
+      "description": "Category2",
+      "active": true,
+      "deleted": false,
+      "attributeDefinitions": [
+        {
+          "name": "name",
+          "description": "name",
+          "type": "string",
+          "active": true,
+          "deleted": false
+        },
+        {
+          "name": "expiry",
+          "description": "expiry",
+          "type": "date",
+          "active": true,
+          "deleted": false
+        }
+      ]
+    }
+    """
+
+    Given url HOST
+    Given path '/categories/1/items'
+    Given request
+    """
+    {
+       "attributeValues": [
+        {
+          "attributeName": "name",
+          "value": "Name1"
+        },
+        {
+          "attributeName": "expiry",
+          "value": "Today"
+        }
+      ],
+    "description": "Item Description",
+    "name": "Item Name"
+    }
+    """
+    And header Accept = 'application/json'
+    When method POST
+    Then status 201
+    And match response ==
+    """
+    {
+      "name": "Item Name",
+      "description": "Item Description",
+      "active": true,
+      "deleted": false,
+      "categoryName": "device7",
+      "attributeValues": [
+        {
+          "attributeName": "name",
+          "value": "Name1"
+        },
+        {
+          "attributeName": "expiry",
+          "value": "Today"
+        }
+      ]
+    }
+    """
+
+  @CDC
+  Scenario: Save new item
+    Given url HOST
+    Given path '/categories/100/items'
+    Given request
+    """
+    {
+       "attributeValues": [
+        {
+          "attributeName": "name",
+          "value": "Name1"
+        },
+        {
+          "attributeName": "expiry",
+          "value": "Today"
+        }
+      ],
+    "description": "Item Description",
+    "name": "Item Name"
+    }
+    """
+    And header Accept = 'application/json'
+    When method POST
+    Then status 404
+    And match response ==
+    """
+    {
+      "errorCode": "UP-2003",
+      "errorMessage": "Category not found with provided categoryId as path param"
+    }
+    """

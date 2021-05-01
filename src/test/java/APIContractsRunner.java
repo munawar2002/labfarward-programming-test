@@ -19,7 +19,7 @@ import org.testcontainers.containers.MySQLContainer;
 public class APIContractsRunner {
 
     @Rule
-    public static MySQLContainer mysql = new MySQLContainer().withDatabaseName("underpayments");
+    public static MySQLContainer mysql = new MySQLContainer().withDatabaseName("test-labfarward");
     public static ConfigurableApplicationContext context;
 
     @BeforeAll

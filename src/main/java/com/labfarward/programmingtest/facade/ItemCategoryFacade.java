@@ -46,6 +46,8 @@ public class ItemCategoryFacade {
     @Transactional(propagation = Propagation.REQUIRED)
     public ItemResponseDto saveItem(Integer categoryId, ItemRequestDto itemRequestDto){
 
+        ItemCategoryValidator.validateItemRequestDto(categoryId,itemRequestDto);
+
         Category category =
                 categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new UserException(ErrorType.CATEGORY_NOT_FOUND));
