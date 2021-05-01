@@ -14,44 +14,28 @@ import java.sql.Timestamp;
 @ToString
 @Builder
 @Entity
-@Table(name = "item")
-public class Item {
+@Table(name = "item_attribute_value")
+public class ItemAttributeValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
-    private String name; // 1. device
-
-    @Column(name = "description")
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "attribute_definition_id")
+    private AttributeDefinition attributeDefinition;
+
+    @Column(name = "value")
+    private String value;
 
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "is_active")
-    private boolean active = Boolean.TRUE;
-
-    @Column(name = "is_deleted")
-    private boolean deleted = Boolean.FALSE;
-
     @CreationTimestamp
     @Column(name = "created_at")
     private Timestamp createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
-
-
-
-
 }

@@ -20,7 +20,11 @@ public enum ErrorType {
     ATTRIBUTE_DEFINITION_NAME_IS_NULL("UP-2001", HttpStatus.BAD_REQUEST,
             "Attribute Definition name can't be null", ErrorCategory.VALIDATION),
     ATTRIBUTE_DEFINITION_TYPE_IS_NULL("UP-2002", HttpStatus.BAD_REQUEST,
-            "Attribute Definition type can't be null", ErrorCategory.VALIDATION);
+            "Attribute Definition type can't be null", ErrorCategory.VALIDATION),
+    CATEGORY_NOT_FOUND("UP-2003", HttpStatus.NOT_FOUND,
+            "Category not found with provided categoryId as path param", ErrorCategory.VALIDATION),
+    ATTRIBUTE_DEFINITION_NOT_FOUND("UP-2004", HttpStatus.NOT_FOUND,
+            "AttributeDefinition not found with provided name", ErrorCategory.VALIDATION);
 
 
     private final String code;

@@ -40,6 +40,43 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponseDto"
 
+  "/categories/{categoryId}/items":
+    post:
+      summary: "Create a new item"
+      description: "Create a new item under a category"
+      operationId: "saveItem"
+      parameters:
+        - name: "categoryId"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemRequestDto"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemResponseDto"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+        500:
+          description: "Unknown error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDto"
+
 
 
 components:
@@ -63,7 +100,6 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/AttributeDefinitionRequestDto"
-
 
     CategoryResponseDto:
       type: "object"
@@ -91,7 +127,6 @@ components:
           type: "string"
         type:
           type: "string"
-          minLength: 1
 
     AttributeDefinitionResponseDto:
       type: "object"
@@ -106,3 +141,42 @@ components:
           type: "boolean"
         deleted:
           type: "boolean"
+
+    ItemRequestDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          nullable: false
+        description:
+          type: "string"
+        attributeValues:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AttributeValueDto"
+
+    ItemResponseDto:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        description:
+          type: "string"
+        active:
+          type: "boolean"
+        deleted:
+          type: "boolean"
+        categoryName:
+          type: "string"
+        attributeValues:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AttributeValueDto"
+
+    AttributeValueDto:
+      type: "object"
+      properties:
+        attributeName:
+          type: "string"
+        value:
+          type: "string"
